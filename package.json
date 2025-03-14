@@ -10,7 +10,9 @@
     "ios": "expo start -c --ios",
     "web": "expo start -c --web",
     "clean": "rm -rf .expo node_modules",
-    "postinstall": "npx tailwindcss -i ./global.css -o ./node_modules/.cache/nativewind/global.css"
+    "postinstall": "npx tailwindcss -i ./global.css -o ./node_modules/.cache/nativewind/global.css",
+    "update": "eas update --channel preview --platform android ",
+    "build": "eas build --profile preview --platform android"
   },
   "dependencies": {
     "@react-navigation/native": "^7.0.0",
@@ -29,6 +31,7 @@
     "expo-splash-screen": "~0.29.20",
     "expo-status-bar": "~2.0.1",
     "expo-system-ui": "~4.0.7",
+    "expo-updates": "~0.27.3",
     "lucide-react-native": "^0.378.0",
     "nativewind": "^4.1.23",
     "react": "18.3.1",

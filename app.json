@@ -23,7 +23,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.tmpuser3333.anyflix"
     },
     "web": {
       "bundler": "metro",
@@ -35,6 +36,18 @@
     ],
     "experiments": {
       "typedRoutes": true
+    },
+    "owner": "tmpuser3333",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/b970725e-c468-4284-8a99-b5ecf96d1714"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b970725e-c468-4284-8a99-b5ecf96d1714"
+      }
     }
   }
 }
