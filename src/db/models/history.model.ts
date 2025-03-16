@@ -9,7 +9,7 @@ export const HistoryTable = sqliteTable("history", {
     () => new Date()
   ),
 });
-export const ProgressRelations = relations(HistoryTable, ({ many, one }) => ({
+export const HistoryRelations = relations(HistoryTable, ({ many, one }) => ({
   show: one(ShowTable, {
     fields: [HistoryTable.showId],
     references: [ShowTable.id],

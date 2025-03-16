@@ -2,7 +2,7 @@ import React, {
   type PropsWithChildren,
   useContext,
   useEffect,
-  useState
+  useState,
 } from "react";
 import { View } from "react-native";
 import { Text } from "~/components/ui/text";
@@ -20,18 +20,19 @@ function MigrationProvider(props: any) {
   if (error) {
     console.log(error);
     return (
-      <View className="flex-1 gap-5 p-6 bg-secondary/30">
+      <View className="flex-1 gap-5 p-6 bg-secondary w-screen h-screen">
         <Text>Migration error: {error.message}</Text>
       </View>
     );
   }
   if (!success) {
     return (
-      <View className="flex-1 gap-5 p-6 bg-secondary/30">
-        <Text>Migration is in progress...</Text>
+      <View className="flex-1 gap-5 p-6 bg-secondary w-screen h-screen">
+        <Text>Inprogress</Text>
       </View>
     );
   }
+
   return props.children;
 }
 
@@ -40,6 +41,7 @@ export function DatabaseProvider({ children }: PropsWithChildren) {
     null
   );
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
   useEffect(() => {
     if (db) return;
     initialize().then((newDb) => {

@@ -42,6 +42,9 @@ module.exports = {
           foreground: 'hsl(var(--card-foreground))',
         },
       },
+      aspectRatio: {
+        showCard:"1/1.5"
+      },
       borderWidth: {
         hairline: hairlineWidth(),
       },

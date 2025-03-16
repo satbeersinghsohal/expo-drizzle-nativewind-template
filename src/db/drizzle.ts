@@ -1,8 +1,8 @@
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { useMigrations } from "drizzle-orm/expo-sqlite/migrator";
 import { openDatabaseSync } from "expo-sqlite";
+import * as schema from "~/db/models";
 import migrations from "./migrations/migrations";
-import * as schema from "./schema";
 
 const expoDb = openDatabaseSync("database.db", { enableChangeListener: true });
 const db = drizzle(expoDb, { schema });

@@ -1,95 +1,142 @@
-import * as React from 'react';
-import { View } from 'react-native';
-import Animated, { FadeInUp, FadeOutDown, LayoutAnimationConfig } from 'react-native-reanimated';
-import { Info } from '~/lib/icons/Info';
-import { Avatar, AvatarFallback, AvatarImage } from '~/components/ui/avatar';
-import { Button } from '~/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '~/components/ui/card';
-import { Progress } from '~/components/ui/progress';
-import { Text } from '~/components/ui/text';
-import { Tooltip, TooltipContent, TooltipTrigger } from '~/components/ui/tooltip';
-
-const GITHUB_AVATAR_URI =
-  'https://i.pinimg.com/originals/ef/a2/8d/efa28d18a04e7fa40ed49eeb0ab660db.jpg';
+import { useRouter } from "expo-router";
+import * as React from "react";
+import { FlatList, Image, Pressable, ScrollView, View } from "react-native";
+import { Carousel } from "~/components/ui/carousel";
+import { Skeleton } from "~/components/ui/skeleton";
+import { Text } from "~/components/ui/text";
 
 export default function Screen() {
-  const [progress, setProgress] = React.useState(78);
-
-  function updateProgressValue() {
-    setProgress(Math.floor(Math.random() * 100));
-  }
+  // const query = useGetHomePage();
+  const router = useRouter();
+  React.useEffect(() => {
+    setTimeout(() => {
+      router.push("/show/58567");
+    }, 1000);
+  }, [router]);
+  return <View></View>;
   return (
-    <View className='flex-1 justify-center items-center gap-5 p-6 bg-secondary/30'>
-      <Card className='w-full max-w-sm p-6 rounded-2xl'>
-        <CardHeader className='items-center'>
-          <Avatar alt="Rick Sanchez's Avatar" className='w-24 h-24'>
-            <AvatarImage source={{ uri: GITHUB_AVATAR_URI }} />
-            <AvatarFallback>
-              <Text>RS</Text>
-            </AvatarFallback>
-          </Avatar>
-          <View className='p-3' />
-          <CardTitle className='pb-2 text-center'>Rick Sanchezddddddddddddddddddd</CardTitle>
-          <View className='flex-row'>
-            <CardDescription className='text-base font-semibold'>Scientist</CardDescription>
-            <Tooltip delayDuration={150}>
-              <TooltipTrigger className='px-2 pb-0.5 active:opacity-50'>
-                <Info size={14} strokeWidth={2.5} className='w-4 h-4 text-foreground/70' />
-              </TooltipTrigger>
-              <TooltipContent className='py-2 px-4 shadow'>
-                <Text className='native:text-lg'>Freelance</Text>
-              </TooltipContent>
-            </Tooltip>
-          </View>
-        </CardHeader>
-        <CardContent>
-          <View className='flex-row justify-around gap-3'>
-            <View className='items-center'>
-              <Text className='text-sm text-muted-foreground'>Dimension</Text>
-              <Text className='text-xl font-semibold'>C-137</Text>
-            </View>
-            <View className='items-center'>
-              <Text className='text-sm text-muted-foreground'>Age</Text>
-              <Text className='text-xl font-semibold'>70</Text>
-            </View>
-            <View className='items-center'>
-              <Text className='text-sm text-muted-foreground'>Species</Text>
-              <Text className='text-xl font-semibold'>Human</Text>
-            </View>
-          </View>
-        </CardContent>
-        <CardFooter className='flex-col gap-3 pb-0'>
-          <View className='flex-row items-center overflow-hidden'>
-            <Text className='text-sm text-muted-foreground'>Productivity:</Text>
-            <LayoutAnimationConfig skipEntering>
-              <Animated.View
-                key={progress}
-                entering={FadeInUp}
-                exiting={FadeOutDown}
-                className='w-11 items-center'
+    <ScrollView>
+      <View className="h-72">
+        {query.isPending && <Skeleton className={"w-screen h-full"} />}
+        {!query.isPending && query.data && (
+          <Carousel
+            data={query.data?.banners}
+            enableAutoScroll={true}
+            renderItem={(item, index) => (
+              <Pressable onPress={() => router.push(`/show/${item.showId}`)}>
+                <View key={(index + 1).toString()} className="relative">
+                  <Image
+                    src={item.image}
+                    className="w-screen h-64 p-0"
+                    resizeMode="cover"
+                  />
+                  <View className="px-4 py-1 mt-1 bg-secondary rounded-full">
+                    <Text className="text-xs font-semibold line-clamp-1">
+                      {item.title}
+                    </Text>
+                  </View>
+                </View>
+              </Pressable>
+            )}
+          />
+        )}
+      </View>
+      <Text className="text-3xl font-semibold px-2 my-3">Recently Added</Text>
+      <View className="px-2">
+        {query.isPending && <Skeleton className={"w-screen h-72"} />}
+        {!query.isPending && query.data && (
+          <FlatList
+            data={query.data?.recentlyAddedShows}
+            horizontal={true}
+            renderItem={({ item, index }) => (
+              <View
+                key={(index + 1).toString()}
+                className="relative aspect-showCard h-72 mx-2"
               >
-                <Text className='text-sm font-bold text-sky-600'>{progress}%</Text>
-              </Animated.View>
-            </LayoutAnimationConfig>
-          </View>
-          <Progress value={progress} className='h-2' indicatorClassName='bg-sky-600' />
-          <View />
-          <Button
-            variant='outline'
-            className='shadow shadow-foreground/5'
-            onPress={updateProgressValue}
-          >
-            <Text>Update</Text>
-          </Button>
-        </CardFooter>
-      </Card>
-    </View>
+                <Image
+                  src={item.image}
+                  className="w-full h-64 p-0"
+                  resizeMode="cover"
+                />
+                <View className="absolute top-1 right-1 px-2 py-1 bg-secondary rounded-full">
+                  <Text className="text-xs font-semibold line-clamp-1">
+                    {item.latestEpisodeNumber}
+                  </Text>
+                </View>
+                <View className="px-4 py-1 bg-secondary rounded-b-lg">
+                  <Text className="text-xs font-semibold line-clamp-1">
+                    {item.title}
+                  </Text>
+                </View>
+              </View>
+            )}
+          />
+        )}
+      </View>
+      <Text className="text-3xl font-semibold px-2 my-3">Currently Airing</Text>
+      <View className="px-2">
+        {query.isPending && <Skeleton className={"w-screen h-72"} />}
+        {!query.isPending && query.data && (
+          <FlatList
+            data={query.data?.currentlyAiringShows}
+            horizontal={true}
+            renderItem={({ item, index }) => (
+              <View
+                key={(index + 1).toString()}
+                className="relative aspect-showCard h-72 mx-2"
+              >
+                <Image
+                  src={item.image}
+                  className="w-full h-64 p-0"
+                  resizeMode="cover"
+                />
+                <View className="absolute top-1 right-1 px-2 py-1 bg-secondary rounded-full">
+                  <Text className="text-xs font-semibold line-clamp-1">
+                    {item.latestEpisodeNumber}
+                  </Text>
+                </View>
+                <View className="px-4 py-1 bg-secondary rounded-b-lg">
+                  <Text className="text-xs font-semibold line-clamp-1">
+                    {item.title}
+                  </Text>
+                </View>
+              </View>
+            )}
+          />
+        )}
+      </View>
+      <Text className="text-3xl font-semibold px-2 my-3">Top Shows</Text>
+      <View className="px-2">
+        {query.isPending && <Skeleton className={"w-screen h-72"} />}
+        {!query.isPending && query.data && (
+          <FlatList
+            data={query.data?.topShows}
+            horizontal={true}
+            renderItem={({ item, index }) => (
+              <View
+                key={(index + 1).toString()}
+                className="relative aspect-showCard h-72 mx-2"
+              >
+                <Image
+                  src={item.image}
+                  className="w-full h-64 p-0"
+                  resizeMode="cover"
+                />
+                <View className="absolute top-1 right-1 px-2 py-1 bg-secondary rounded-full">
+                  <Text className="text-xs font-semibold line-clamp-1">
+                    {item.rank}
+                  </Text>
+                </View>
+                <View className="px-4 py-1 bg-secondary rounded-b-lg">
+                  <Text className="text-xs font-semibold line-clamp-1">
+                    {item.title}
+                  </Text>
+                </View>
+              </View>
+            )}
+          />
+        )}
+      </View>
+    </ScrollView>
   );
 }
