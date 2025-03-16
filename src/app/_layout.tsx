@@ -8,11 +8,12 @@ import {
 } from "@react-navigation/native";
 import { PortalHost } from "@rn-primitives/portal";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Stack } from "expo-router";
+import { Stack, router } from "expo-router";
 import * as ScreenOrientation from "expo-screen-orientation";
 import { StatusBar } from "expo-status-bar";
+import { Search } from "lucide-react-native";
 import * as React from "react";
-import { Platform } from "react-native";
+import { Platform, View } from "react-native";
 import { RootSiblingParent } from "react-native-root-siblings";
 import { ThemeToggle } from "~/components/ThemeToggle";
 import { DatabaseProvider } from "~/db/provider";
@@ -77,6 +78,7 @@ export default function RootLayout() {
       unlockOrientation();
     };
   }, []);
+
   if (!isColorSchemeLoaded) {
     return null;
   }
@@ -92,20 +94,44 @@ export default function RootLayout() {
                 name="index"
                 options={{
                   title: "Anyflix",
-                  headerRight: () => <ThemeToggle />,
+                  headerRight: () => (
+                    <View className="flex flex-row gap-2">
+                      <Search
+                        style={{ padding: 5 }}
+                        color={"#fff"}
+                        onPress={() => router.push("/show/search")}
+                      />
+
+                      <ThemeToggle />
+                    </View>
+                  ),
                 }}
               />
               <Stack.Screen
                 name="show/[id]"
                 options={{
                   title: "Show",
-                  headerRight: () => <ThemeToggle />,
+                  headerRight: () => (
+                    <View className="flex flex-row gap-2">
+                      <Search
+                        color={"#fff"}
+                        onPress={() => router.push("/show/search")}
+                      />
+                      <ThemeToggle />
+                    </View>
+                  ),
                 }}
               />
               <Stack.Screen
                 name="episode"
                 options={{
                   headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="show/search"
+                options={{
+                  title: "Search Shows",
                 }}
               />
             </Stack>

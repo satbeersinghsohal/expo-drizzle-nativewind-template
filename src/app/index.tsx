@@ -4,16 +4,12 @@ import { FlatList, Image, Pressable, ScrollView, View } from "react-native";
 import { Carousel } from "~/components/ui/carousel";
 import { Skeleton } from "~/components/ui/skeleton";
 import { Text } from "~/components/ui/text";
+import { useGetHomePage } from "~/service/hooks/useGetHomeScreen";
 
 export default function Screen() {
-  // const query = useGetHomePage();
+  const query = useGetHomePage();
   const router = useRouter();
-  React.useEffect(() => {
-    setTimeout(() => {
-      router.push("/show/58567");
-    }, 1000);
-  }, [router]);
-  return <View></View>;
+
   return (
     <ScrollView>
       <View className="h-72">
@@ -49,26 +45,28 @@ export default function Screen() {
             data={query.data?.recentlyAddedShows}
             horizontal={true}
             renderItem={({ item, index }) => (
-              <View
-                key={(index + 1).toString()}
-                className="relative aspect-showCard h-72 mx-2"
-              >
-                <Image
-                  src={item.image}
-                  className="w-full h-64 p-0"
-                  resizeMode="cover"
-                />
-                <View className="absolute top-1 right-1 px-2 py-1 bg-secondary rounded-full">
-                  <Text className="text-xs font-semibold line-clamp-1">
-                    {item.latestEpisodeNumber}
-                  </Text>
+              <Pressable onPress={() => router.push(`/show/${item.showId}`)}>
+                <View
+                  key={(index + 1).toString()}
+                  className="relative aspect-showCard h-72 mx-2"
+                >
+                  <Image
+                    src={item.image}
+                    className="w-full h-64 p-0"
+                    resizeMode="cover"
+                  />
+                  <View className="absolute top-1 right-1 px-2 py-1 bg-secondary rounded-full">
+                    <Text className="text-xs font-semibold line-clamp-1">
+                      {item.latestEpisodeNumber}
+                    </Text>
+                  </View>
+                  <View className="px-4 py-1 bg-secondary rounded-b-lg">
+                    <Text className="text-xs font-semibold line-clamp-1">
+                      {item.title}
+                    </Text>
+                  </View>
                 </View>
-                <View className="px-4 py-1 bg-secondary rounded-b-lg">
-                  <Text className="text-xs font-semibold line-clamp-1">
-                    {item.title}
-                  </Text>
-                </View>
-              </View>
+              </Pressable>
             )}
           />
         )}
@@ -81,26 +79,28 @@ export default function Screen() {
             data={query.data?.currentlyAiringShows}
             horizontal={true}
             renderItem={({ item, index }) => (
-              <View
-                key={(index + 1).toString()}
-                className="relative aspect-showCard h-72 mx-2"
-              >
-                <Image
-                  src={item.image}
-                  className="w-full h-64 p-0"
-                  resizeMode="cover"
-                />
-                <View className="absolute top-1 right-1 px-2 py-1 bg-secondary rounded-full">
-                  <Text className="text-xs font-semibold line-clamp-1">
-                    {item.latestEpisodeNumber}
-                  </Text>
+              <Pressable onPress={() => router.push(`/show/${item.showId}`)}>
+                <View
+                  key={(index + 1).toString()}
+                  className="relative aspect-showCard h-72 mx-2"
+                >
+                  <Image
+                    src={item.image}
+                    className="w-full h-64 p-0"
+                    resizeMode="cover"
+                  />
+                  <View className="absolute top-1 right-1 px-2 py-1 bg-secondary rounded-full">
+                    <Text className="text-xs font-semibold line-clamp-1">
+                      {item.latestEpisodeNumber}
+                    </Text>
+                  </View>
+                  <View className="px-4 py-1 bg-secondary rounded-b-lg">
+                    <Text className="text-xs font-semibold line-clamp-1">
+                      {item.title}
+                    </Text>
+                  </View>
                 </View>
-                <View className="px-4 py-1 bg-secondary rounded-b-lg">
-                  <Text className="text-xs font-semibold line-clamp-1">
-                    {item.title}
-                  </Text>
-                </View>
-              </View>
+              </Pressable>
             )}
           />
         )}
@@ -113,26 +113,28 @@ export default function Screen() {
             data={query.data?.topShows}
             horizontal={true}
             renderItem={({ item, index }) => (
-              <View
-                key={(index + 1).toString()}
-                className="relative aspect-showCard h-72 mx-2"
-              >
-                <Image
-                  src={item.image}
-                  className="w-full h-64 p-0"
-                  resizeMode="cover"
-                />
-                <View className="absolute top-1 right-1 px-2 py-1 bg-secondary rounded-full">
-                  <Text className="text-xs font-semibold line-clamp-1">
-                    {item.rank}
-                  </Text>
+              <Pressable onPress={() => router.push(`/show/${item.showId}`)}>
+                <View
+                  key={(index + 1).toString()}
+                  className="relative aspect-showCard h-72 mx-2"
+                >
+                  <Image
+                    src={item.image}
+                    className="w-full h-64 p-0"
+                    resizeMode="cover"
+                  />
+                  <View className="absolute top-1 right-1 px-2 py-1 bg-secondary rounded-full">
+                    <Text className="text-xs font-semibold line-clamp-1">
+                      {item.rank}
+                    </Text>
+                  </View>
+                  <View className="px-4 py-1 bg-secondary rounded-b-lg">
+                    <Text className="text-xs font-semibold line-clamp-1">
+                      {item.title}
+                    </Text>
+                  </View>
                 </View>
-                <View className="px-4 py-1 bg-secondary rounded-b-lg">
-                  <Text className="text-xs font-semibold line-clamp-1">
-                    {item.title}
-                  </Text>
-                </View>
-              </View>
+              </Pressable>
             )}
           />
         )}

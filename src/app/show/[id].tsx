@@ -14,7 +14,9 @@ import {
 export default function Screen() {
   const { id } = useLocalSearchParams();
   const query = useGetSingleShowDetails(id as string);
+  console.log(query.data)
   const episodeQuery = useGetEpisodes(id as string, query.data?.slug);
+  console.log(episodeQuery.data)
   return (
     <ScrollView>
       {query.isPending && <Skeleton className={"w-screen h-80"} />}
@@ -66,33 +68,35 @@ export default function Screen() {
           <Skeleton className={"w-screen h-10"} />
         </View>
       )}
-      {episodeQuery.data && (
-        <FlatList
-          data={episodeQuery.data}
-          ListFooterComponent={() => <View className="h-10 w-screen" />}
-          renderItem={({ item }) => (
-            <Pressable
-              onPress={() =>
-                router.push({
-                  pathname: "/episode",
-                  params: {
-                    id,
-                    slug: query.data?.slug,
-                    eps: item.episodeNumber,
-                  },
-                })
-              }
-            >
-              <View>
-                <Text className="px-4 py-2 text-muted-foreground">
-                  {item.title}
-                </Text>
-              </View>
-            </Pressable>
-          )}
-          ItemSeparatorComponent={() => <SelectSeparator />}
-        />
-      )}
+      <View>
+        {episodeQuery.data && (
+          <FlatList
+            data={episodeQuery.data}
+            ListFooterComponent={() => <View className="h-10 w-screen" />}
+            renderItem={({ item }) => (
+              <Pressable
+                onPress={() =>
+                  router.push({
+                    pathname: "/episode",
+                    params: {
+                      id,
+                      slug: query.data?.slug,
+                      eps: item.episodeNumber,
+                    },
+                  })
+                }
+              >
+                <View>
+                  <Text className="px-4 py-2 text-muted-foreground">
+                    {item.title.replace(/[^a-zA-Z0-9-,!& ]/g,"").replace(/\s+/g," ").trim()}
+                  </Text>
+                </View>
+              </Pressable>
+            )}
+            ItemSeparatorComponent={() => <SelectSeparator />}
+          />
+        )}
+      </View>
     </ScrollView>
   );
 }

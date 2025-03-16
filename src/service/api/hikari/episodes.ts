@@ -23,7 +23,14 @@ export const getEpisodes = async (showId: string, slug: string) => {
                 break;
             }
         }
-        let slides = document.querySelectorAll("#episodes-content a");
+        let slides = [];
+        if(document.querySelector("#episodes-load")){
+
+            slides=  document.querySelectorAll("#episodes-content a");
+        }else {
+            slides = document.querySelectorAll("#episodes-content div[data-page] a");
+
+        }
         const iframeUrl = document.querySelector("#iframe-embed iframe")?.getAttribute("src") || "";
         log("iframe", iframeUrl)
         slides.forEach(function(slide){

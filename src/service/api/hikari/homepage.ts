@@ -33,7 +33,7 @@ export const getHomePage = async () => {
     }[];
   }>(
     "https://watch.hikaritv.xyz/",
-    `
+    /*js*/ `
     function getText(el){return el?el.innerText.trim():""};
 
     function getBanners(){
@@ -132,7 +132,7 @@ export const getHomePage = async () => {
             image: imageEl ? imageEl.getAttribute("data-src") || imageEl.src : "",
             link: linkEl ? linkEl.getAttribute("href") : "",
             rank:  getText(rankEl),
-            showId:  linkEl ? linkEl.getAttribute("href").replace("/anime/") :""
+            showId:  linkEl ? linkEl.getAttribute("href").replace("/anime/","") :""
           });
         });
         return results;

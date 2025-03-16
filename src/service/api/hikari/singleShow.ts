@@ -1,7 +1,6 @@
 import { scrapeUrl } from "~/service/scraper";
 
 export const getSingleShowDetails = async (showId: string) => {
-  console.log("ok in getSingleShowDetails");
   return await scrapeUrl<{
     showId: string;
     title: string;
