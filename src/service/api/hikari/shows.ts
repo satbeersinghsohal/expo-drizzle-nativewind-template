@@ -1,6 +1,16 @@
 import { scrapeUrl } from "~/service/scraper";
+type FilterKeys = "searchQuery" | "year" | "season";
 
-export const getShowsByFilter = async (filters: { searchQuery: string }) => {
+export const getShowsByFilter = async (filters: Record<FilterKeys, string>) => {
+  console.log("fetching data from", `https://watch.hikaritv.xyz/${
+      filters.searchQuery ? "search" : "filter"
+    }?keyword=${
+      filters.searchQuery
+    }&type=&country=&stats=&rate=&source=1&season=${
+      filters.season
+    }&aired_year=${
+      filters.year
+    }&aired_month=&aired_day=&sort=default&language=0&genres=`)
   return await scrapeUrl<
     {
       showId: string;
@@ -10,12 +20,22 @@ export const getShowsByFilter = async (filters: { searchQuery: string }) => {
       rank: string;
     }[]
   >(
-    `https://watch.hikaritv.xyz/search?keyword=${filters.searchQuery}`,
+    `https://watch.hikaritv.xyz/${
+      filters.searchQuery ? "search" : "filter"
+    }?keyword=${
+      filters.searchQuery
+    }&type=&country=&stats=&rate=&source=1&season=${
+      filters.season
+    }&aired_year=${
+      filters.year
+    }&aired_month=&aired_day=&sort=default&language=0&genres=`,
     /*js*/ `
     function getText(el){return el?el.innerText.trim():""};
-    
+    function sleep() {
+      return new Promise((r) => setTimeout(r, 1000));
+    }
     function getTopShows(){
-        
+       
         let results = [];
         let slides = document.querySelectorAll(".film_list-wrap .flw-item");
         slides.forEach(function(slide){

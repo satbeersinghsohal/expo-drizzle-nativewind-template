@@ -5,13 +5,16 @@ import * as schema from "~/db/models";
 import { useDatabase } from "~/db/provider";
 import * as providers from "~/service/api";
 import { useGetSession } from "./useGetSession";
+type FilterKeys = "searchQuery" | "year" | "season";
 
-export const useGetShowsByFilter = (filter: { searchQuery: string }) => {
+export const useGetShowsByFilter = (filter: Record<FilterKeys, string>) => {
   const session = useGetSession();
+
   return useQuery({
-    queryKey: ["SHOW_SEARCH", filter.searchQuery],
+    queryKey: ["SHOW_SEARCH", filter.searchQuery, filter.season, filter.year],
     queryFn: () =>
-      filter.searchQuery && session.selectedProvider
+      Object.keys(filter).some((k) => filter[k as FilterKeys]) &&
+      session.selectedProvider
         ? providers[session.selectedProvider].getShowsByFilter(filter)
         : null,
     staleTime: 1000 * 60,

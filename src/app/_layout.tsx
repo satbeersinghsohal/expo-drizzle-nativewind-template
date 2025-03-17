@@ -14,6 +14,7 @@ import { StatusBar } from "expo-status-bar";
 import { Search } from "lucide-react-native";
 import * as React from "react";
 import { Platform, View } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { RootSiblingParent } from "react-native-root-siblings";
 import { ThemeToggle } from "~/components/ThemeToggle";
 import { DatabaseProvider } from "~/db/provider";
@@ -86,58 +87,60 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
       <DatabaseProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
           <StatusBar style={"light"} hidden={false} />
-        <QueryClientProvider client={queryClient}>
-          <RootSiblingParent>
-            <Stack>
-              <Stack.Screen
-                name="index"
-                options={{
-                  title: "Anyflix",
-                  headerRight: () => (
-                    <View className="flex flex-row gap-2">
-                      <Search
-                        style={{ padding: 5 }}
-                        color={"#fff"}
-                        onPress={() => router.push("/show/search")}
-                      />
+          <QueryClientProvider client={queryClient}>
+            <RootSiblingParent>
+              <Stack initialRouteName="show/search">
+                <Stack.Screen
+                  name="index"
+                  options={{
+                    title: "Anyflix",
+                    headerRight: () => (
+                      <View className="flex flex-row gap-2">
+                        <Search
+                          style={{ padding: 5 }}
+                          color={"#fff"}
+                          onPress={() => router.push("/show/search")}
+                        />
 
-                      <ThemeToggle />
-                    </View>
-                  ),
-                }}
-              />
-              <Stack.Screen
-                name="show/[id]"
-                options={{
-                  title: "Show",
-                  headerRight: () => (
-                    <View className="flex flex-row gap-2">
-                      <Search
-                        color={"#fff"}
-                        onPress={() => router.push("/show/search")}
-                      />
-                      <ThemeToggle />
-                    </View>
-                  ),
-                }}
-              />
-              <Stack.Screen
-                name="episode"
-                options={{
-                  headerShown: false,
-                }}
-              />
-              <Stack.Screen
-                name="show/search"
-                options={{
-                  title: "Search Shows",
-                }}
-              />
-            </Stack>
-            <PortalHost />
-          </RootSiblingParent>
-        </QueryClientProvider>
+                        <ThemeToggle />
+                      </View>
+                    ),
+                  }}
+                />
+                <Stack.Screen
+                  name="show/[id]"
+                  options={{
+                    title: "Show",
+                    headerRight: () => (
+                      <View className="flex flex-row gap-2">
+                        <Search
+                          color={"#fff"}
+                          onPress={() => router.push("/show/search")}
+                        />
+                        <ThemeToggle />
+                      </View>
+                    ),
+                  }}
+                />
+                <Stack.Screen
+                  name="episode"
+                  options={{
+                    headerShown: false,
+                  }}
+                />
+                <Stack.Screen
+                  name="show/search"
+                  options={{
+                    title: "Search Shows",
+                  }}
+                />
+              </Stack>
+              <PortalHost />
+            </RootSiblingParent>
+          </QueryClientProvider>
+        </GestureHandlerRootView>
       </DatabaseProvider>
     </ThemeProvider>
   );
