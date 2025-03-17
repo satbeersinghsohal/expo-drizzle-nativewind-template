@@ -102,7 +102,7 @@ export const getHomePage = async () => {
             image: imageEl ? imageEl.getAttribute("data-src") || imageEl.src : "",
             epLink: linkEl ? linkEl.getAttribute("href") : "",
             latestEpisodeNumber:  getText(epEl),
-            showId:  linkEl ? new URLSearchParams(linkEl.getAttribute("href")).get("uid"):""
+            showId:  linkEl ? linkEl.getAttribute("data-id"):""
 
           });
         });

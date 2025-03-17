@@ -86,9 +86,9 @@ export default function RootLayout() {
   return (
     <ThemeProvider value={isDarkColorScheme ? DARK_THEME : LIGHT_THEME}>
       <DatabaseProvider>
+          <StatusBar style={"light"} hidden={false} />
         <QueryClientProvider client={queryClient}>
           <RootSiblingParent>
-            <StatusBar style={isDarkColorScheme ? "light" : "dark"} />
             <Stack>
               <Stack.Screen
                 name="index"

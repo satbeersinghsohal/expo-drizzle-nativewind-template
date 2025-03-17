@@ -18,7 +18,6 @@ export const useDatabase = () =>
 function MigrationProvider(props: any) {
   const { success, error } = useMigrationHelper();
   if (error) {
-    console.log(error);
     return (
       <View className="flex-1 gap-5 p-6 bg-secondary w-screen h-screen">
         <Text>Migration error: {error.message}</Text>
@@ -27,9 +26,7 @@ function MigrationProvider(props: any) {
   }
   if (!success) {
     return (
-      <View className="flex-1 gap-5 p-6 bg-secondary w-screen h-screen">
-        <Text>Inprogress</Text>
-      </View>
+      <View className="flex-1 gap-5 p-6 bg-secondary w-screen h-screen" />
     );
   }
 

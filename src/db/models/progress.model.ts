@@ -8,7 +8,10 @@ export const ProgressTable = sqliteTable("progress", {
   progressPercentage: integer("progress_percentage"),
   showId: integer("show_id"),
   episodeRefId: text("episode_ref_id"),
-  createdAt: integer("scheduled_at", { mode: "timestamp_ms" }).$defaultFn(
+  createdAt: integer("created_at", { mode: "timestamp_ms" }).$defaultFn(
+    () => new Date()
+  ),
+  updatedAt: integer("updated_at", { mode: "timestamp_ms" }).$defaultFn(
     () => new Date()
   ),
 });

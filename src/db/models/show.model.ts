@@ -8,6 +8,10 @@ export const ShowTable = sqliteTable("show", {
   image: text("image"),
   refShowId: text("ref_show_id"),
   provider: text("provider"),
+  lastWatchedAt: integer("last_watched_at", { mode: "timestamp_ms" }).$defaultFn(
+    () => new Date()
+  ),
+  progressId: integer("progress_id"),
   createdAt: integer("scheduled_at", { mode: "timestamp_ms" }).$defaultFn(
     () => new Date()
   ),

@@ -20,12 +20,37 @@ export const useGetSingleShowDetails = (showId?: string) => {
 
 export const useGetEpisodes = (showId?: string, slug?: string) => {
   const session = useGetSession();
+  const { db } = useDatabase();
+
   return useQuery({
     queryKey: ["EPISODE", slug, showId, session.selectedProvider],
-    queryFn: () =>
-      showId && slug && session.selectedProvider
-        ? providers[session.selectedProvider].getEpisodes(showId, slug)
-        : null,
+    queryFn: async () => {
+      if (!showId || !slug || !session.selectedProvider) return null;
+      const data = await providers[session.selectedProvider].getEpisodes(
+        showId,
+        slug
+      );
+      const progressData = await db
+        .select({ progress: schema.ProgressTable })
+        .from(schema.ProgressTable)
+        .leftJoin(
+          schema.ShowTable,
+          eq(schema.ShowTable.id, schema.ProgressTable.showId)
+        )
+        .where(
+          and(
+            eq(schema.ShowTable.provider, session.selectedProvider || ""),
+            eq(schema.ShowTable.refShowId, showId)
+          )
+        );
+      const progressMap = new Map(
+        progressData.map((i) => [i.progress.episodeRefId, i.progress])
+      );
+      return data.map((i) => ({
+        ...i,
+        progress: progressMap.get(i.episodeNumber.toString()),
+      }));
+    },
     staleTime: 1000 * 60,
   });
 };
@@ -95,7 +120,7 @@ export const useEpisodeProgressMutation = () => {
       progress: number;
       progressPercentage: number;
     }) => {
-      console.log("ok in 111111 2");
+     
 
       const [exist] = await db
         .select()
@@ -106,12 +131,12 @@ export const useEpisodeProgressMutation = () => {
             eq(schema.ShowTable.provider, session.selectedProvider || "")
           )
         );
-      console.log("ok in 111111 3", exist);
+     
 
       if (!exist) {
         throw new Error("show not found");
       }
-      console.log("ok in 111111 4");
+     
 
       const [progressExist] = await db
         .select()
@@ -123,27 +148,33 @@ export const useEpisodeProgressMutation = () => {
           )
         );
 
-      console.log("ok in 111111 5");
-
+     
+      let progressId = progressExist?.id
       if (progressExist) {
-        console.log("ok in 111111 6");
+       
 
         await db.update(schema.ProgressTable).set({
           progress: payload.progress,
           progressPercentage: payload.progressPercentage,
+          updatedAt: new Date()
         });
-        console.log("ok in 111111 7");
+       
       } else {
-        console.log("ok in 111111 8");
+       
 
-        await db.insert(schema.ProgressTable).values({
+        const [tmp] = await db.insert(schema.ProgressTable).values({
           progress: payload.progress,
           progressPercentage: payload.progressPercentage,
           episodeRefId: payload.episodeRefId || "",
           showId: exist?.id,
-        });
-        console.log("ok in 111111 9");
+          updatedAt: new Date()
+        }).returning({id: schema.ProgressTable.id})
+        progressId = tmp.id
       }
+      await db.update(schema.ShowTable).set({
+        progressId:progressId,
+        lastWatchedAt:new Date()
+      }).where(eq(schema.ShowTable.id, exist.id))
     },
   });
 };

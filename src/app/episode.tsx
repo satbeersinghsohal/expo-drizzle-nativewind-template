@@ -1,13 +1,13 @@
 import { useLocalSearchParams } from "expo-router";
 import * as ScreenOrientation from "expo-screen-orientation";
+import { StatusBar } from 'expo-status-bar';
 import * as React from "react";
 import { View } from "react-native";
 import WebView from "react-native-webview";
 import { Text } from "~/components/ui/text";
 import {
   useEpisodeProgressMutation,
-  useGetEpisodeProgress,
-  useGetEpisodes,
+  useGetEpisodes
 } from "~/service/hooks/useGetSingleShow";
 
 export default function Screen() {
@@ -16,22 +16,9 @@ export default function Screen() {
   const episodeQuery = useGetEpisodes(item.id as string, item.slug as string);
   const selectedEpisode = episodeQuery.data?.find((i) => i.iframe);
   const iframeUrl = selectedEpisode?.iframe;
-  const data = useGetEpisodeProgress(
-    item.id as string,
-    episodeQuery.data?.find((i) => i.iframe)?.episodeNumber as string
-  );
+  const progress = selectedEpisode?.progress
   const progressMutation = useEpisodeProgressMutation();
-  React.useEffect(() => {
-    if (!selectedEpisode) return;
-    if (!item) return;
-    progressMutation.mutate({
-      episodeRefId: selectedEpisode.episodeNumber,
-      progress: 0,
-      progressPercentage: 0,
-      refShowId: item.id as string,
-    });
-  }, [item?.id, selectedEpisode?.episodeNumber]);
-  console.log("kkkkkkkkkkkkkkkiframeUrl", iframeUrl);
+
   React.useEffect(() => {
     const lockOrientation = async () => {
       try {
@@ -58,8 +45,9 @@ export default function Screen() {
       unlockOrientation();
     };
   }, []);
-
+  
   const js = `
+
 
    const sleep  = (ms) => new Promise(r => setTimeout(r,ms || 100));
   (async function() {
@@ -79,15 +67,21 @@ export default function Screen() {
       while(true){
         await sleep(300);
          const player = window.jwplayer();
-        if(player.getState() == "playing" ){
-          player.seek(${data?.progress?.progress || 0})
+        if(player){
+        
+          player.seek(${progress?.progress || 0})
 
         break;
         }
+        document.querySelector('.ad-placement')?.remove()
+        document.querySelector('a')?.remove()
       }
+
       while(true){
         await sleep(1000);
         const player = window.jwplayer();
+         document.querySelector('.ad-placement')?.remove()
+        document.querySelector('a')?.remove()
         if(player.getState() == "playing" ){
         
         window.ReactNativeWebView.postMessage(JSON.stringify({
@@ -96,13 +90,10 @@ export default function Screen() {
           }));
           
           }
+      
       }
-      while(true){
-        await sleep(300);
-        document.querySelector('.ad-placement')?.remove()
-        document.querySelector('a')?.remove()
 
-      }
+          
     }catch(e){
       alert(e.message)
     }
@@ -114,23 +105,27 @@ export default function Screen() {
 
   `;
 
-  if (!iframeUrl || episodeQuery.isPending)
+  if (!iframeUrl || episodeQuery.isPending || !progress)
     return (
-      <View className="flex-1 items-center justify-center h-screen w-screen">
+      <View className="flex-1 items-center justify-center h-screen w-screen bg-secondary">
         <Text>Loading....</Text>
       </View>
     );
+  
   return (
+    <>
+    <StatusBar hidden={true}/>
     <WebView
       source={{ uri: iframeUrl }}
+      style={{ width: "100%", height: "100%" }}
       incognito={true}
       injectedJavaScript={js}
       domStorageEnabled={false}
 
       onMessage={(e) => {
         const data = JSON.parse(e.nativeEvent.data);
-        if (data) {
-          console.log(data.progressInSec);
+        if (data.progress > 0) {
+          
           progressMutation.mutate({
             episodeRefId: selectedEpisode.episodeNumber,
             progress: data.progressInSec,
@@ -139,7 +134,8 @@ export default function Screen() {
           });
         }
       }}
-      userAgent="Mozilla/5.0 (X11; Linux x86_64; rv:136.0) Gecko/20100101 Firefox/136.0"
+      userAgent="Mozilla/5.0 (Linux; Android 11; SAMSUNG SM-G973U) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/14.2 Chrome/87.0.4280.141 Mobile Safari/537.36"
     />
+    </>
   );
 }

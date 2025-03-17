@@ -1,11 +1,12 @@
 import { router, useLocalSearchParams } from "expo-router";
-import { Play, Star } from "lucide-react-native";
+import { Pause, Play, Star } from "lucide-react-native";
 import * as React from "react";
 import { FlatList, Image, Pressable, ScrollView, View } from "react-native";
 import { Button } from "~/components/ui/button";
 import { SelectSeparator } from "~/components/ui/select";
 import { Skeleton } from "~/components/ui/skeleton";
 import { Text } from "~/components/ui/text";
+import { cn } from "~/lib/utils";
 import {
   useGetEpisodes,
   useGetSingleShowDetails,
@@ -14,14 +15,19 @@ import {
 
 export default function Screen() {
   const { id } = useLocalSearchParams();
+  
   const query = useGetSingleShowDetails(id as string);
   const episodeQuery = useGetEpisodes(id as string, query.data?.slug);
   const showMutation = useShowMutation();
+  const latestEp = episodeQuery.data?.sort(
+    (a, b) =>
+      +(b.progress?.episodeRefId || 0) - +(a.progress?.episodeRefId || 0)
+  )?.[0];
   React.useEffect(() => {
     if (!query.data) return;
     showMutation.mutate({
       ...query.data,
-      showId:id as string
+      showId: id as string,
     });
   }, [query.data]);
 
@@ -58,10 +64,41 @@ export default function Screen() {
       )}
       {query.data && (
         <View className="px-4 mt-4">
-          <Button className="flex flex-row">
-            <Play fill={"#000"} />
-            <Text>Play</Text>
-          </Button>
+          {!latestEp ? (
+            <Button
+              className="flex flex-row"
+              onPress={() =>
+                router.push({
+                  pathname: "/episode",
+                  params: {
+                    id,
+                    slug: query.data?.slug,
+                    eps: 1,
+                  },
+                })
+              }
+            >
+              <Play fill={"#000"} />
+              <Text>Play</Text>
+            </Button>
+          ) : (
+            <Button
+              className="flex flex-row"
+              onPress={() =>
+                router.push({
+                  pathname: "/episode",
+                  params: {
+                    id,
+                    slug: query.data?.slug,
+                    eps: latestEp.episodeNumber,
+                  },
+                })
+              }
+            >
+              <Pause fill={"#000"} />
+              <Text>Resume Ep{latestEp.episodeNumber}</Text>
+            </Button>
+          )}
         </View>
       )}
       <Text className="px-4 mt-2 line-clamp-3">{query.data?.description}</Text>
@@ -94,8 +131,15 @@ export default function Screen() {
                   })
                 }
               >
-                <View>
-                  <Text className="px-4 py-2 text-muted-foreground">
+                <View className="flex flex-row px-4 py-2 items-center gap-2">
+                  <Text
+                    className={cn(
+                      item.progress?.progressPercentage &&
+                        item.progress.progressPercentage >= 80
+                        ? "text-muted-foreground"
+                        : ""
+                    )}
+                  >
                     {item.title
                       .replace(/[^a-zA-Z0-9-,!& ]/g, "")
                       .replace(/\s+/g, " ")
