@@ -9,14 +9,22 @@ import { Text } from "~/components/ui/text";
 import {
   useGetEpisodes,
   useGetSingleShowDetails,
+  useShowMutation,
 } from "~/service/hooks/useGetSingleShow";
 
 export default function Screen() {
   const { id } = useLocalSearchParams();
   const query = useGetSingleShowDetails(id as string);
-  console.log(query.data)
   const episodeQuery = useGetEpisodes(id as string, query.data?.slug);
-  console.log(episodeQuery.data)
+  const showMutation = useShowMutation();
+  React.useEffect(() => {
+    if (!query.data) return;
+    showMutation.mutate({
+      ...query.data,
+      showId:id as string
+    });
+  }, [query.data]);
+
   return (
     <ScrollView>
       {query.isPending && <Skeleton className={"w-screen h-80"} />}
@@ -88,7 +96,10 @@ export default function Screen() {
               >
                 <View>
                   <Text className="px-4 py-2 text-muted-foreground">
-                    {item.title.replace(/[^a-zA-Z0-9-,!& ]/g,"").replace(/\s+/g," ").trim()}
+                    {item.title
+                      .replace(/[^a-zA-Z0-9-,!& ]/g, "")
+                      .replace(/\s+/g, " ")
+                      .trim()}
                   </Text>
                 </View>
               </Pressable>

@@ -23,6 +23,9 @@ export const getEpisodes = async (showId: string, slug: string) => {
                 break;
             }
         }
+        await sleep();
+        await sleep();
+
         let slides = [];
         if(document.querySelector("#episodes-load")){
 
@@ -33,6 +36,8 @@ export const getEpisodes = async (showId: string, slug: string) => {
         }
         const iframeUrl = document.querySelector("#iframe-embed iframe")?.getAttribute("src") || "";
         log("iframe", iframeUrl)
+
+
         slides.forEach(function(slide){
           let linkEl = slide;
           

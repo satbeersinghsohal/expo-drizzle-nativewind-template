@@ -6,3 +6,4 @@ export const useGetSession = () => {
   const { db } = useDatabase();
   return useLiveQuery(db.select().from(schema.SessionTable)).data?.[0] || {id:0, selectedProvider:"HikariTv"};
 };
+
